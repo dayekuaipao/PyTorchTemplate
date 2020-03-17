@@ -166,7 +166,7 @@ def main():
         parser.add_argument('--dataset_path', type=str, default='./data/cifar-10-batches-py/',help='path to dataset')
         parser.add_argument('--num_workers', type=int, default=4, help='num of workers')
         parser.add_argument('--num_classes', type=int, default=10, help='num of object classes (with void)')
-        parser.add_argument('--num_train', type=int, default=-1, help='num of train data')
+        parser.add_argument('--num_train', type=int, default=-1, help='num of training data')
         parser.add_argument('--gpu_ids', type=str, default='0', help='GPU ids used for training')
         parser.add_argument('--use_gpu', type=bool, default=True, help='whether to user gpu for training')
         parser.add_argument('--pretrained_model_path', type=str, default=None, help='path to load pretrained model')

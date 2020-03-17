@@ -88,7 +88,7 @@ def main():
         parser.add_argument('--model', type=str, default='resnet18', help='Model you are using.')
         parser.add_argument('--crop_height', type=int, default=32, help='Height of cropped/resized input image to network')
         parser.add_argument('--crop_width', type=int, default=32, help='Width of cropped/resized input image to network')
-        parser.add_argument('--dataset_path', type=str, default='/path/to/test_data',help='path of test data')
+        parser.add_argument('--dataset_path', type=str, default='./data/cifar-10-batches-py/',help='path to dataset')
         parser.add_argument('--pretrained_model_path', type=str, default='/path/to/pretrained_model',help='path of pretrained model')
         parser.add_argument('--num_workers', type=int, default=4, help='num of workers')
         parser.add_argument('--num_classes', type=int, default=10, help='num of object classes (with void)')
