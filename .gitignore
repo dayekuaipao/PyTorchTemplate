@@ -3,3 +3,4 @@ runs/
 data/
 **/__pycache__
 *.pth
+**/parameters.txt
