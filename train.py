@@ -30,6 +30,9 @@ class Trainer:
                 # Define Best Prediction
                 self.best_pred = 0.0
                 
+                # Define Current Epoch
+                self.current_epoch = 0
+
                 # Define Dataloader
                 train_transform=transforms.Compose([
                 transforms.ToTensor(),
@@ -37,25 +40,23 @@ class Trainer:
                 valid_transform=transforms.Compose([
                 transforms.ToTensor(),
                 ])
-                dataset = Registries.dataset_registry.__getitem__(args.dataset)(args.dataset_path,'train',train_transform) 
-                
-                # Define number of training data
-                self.num_train = args.num_train
-                
-                if self.num_train == -1:
-                    self.num_train = dataset.__len__()
+                target_transform = transforms.Compose([
+                transforms.ToLong(),
+                ])
+                train_dataset = Registries.dataset_registry.__getitem__(args.dataset)(args.dataset_path,'train',train_transform,target_transform) 
+                valid_dataset = Registries.dataset_registry.__getitem__(args.dataset)(args.dataset_path,'valid',valid_transform,target_transform) 
                     
                 kwargs = {
                     'batch_size':args.batch_size,
                     'num_workers': args.num_workers, 
                     'pin_memory': True}
                 
-                self.train_loader = DataLoader(dataset=dataset, 
+                self.train_loader = DataLoader(dataset=train_dataset, 
                                     shuffle=False ,
-                                    sampler=sampler.SubsetRandomSampler(range(self.num_train)),**kwargs)
-                self.valid_loader = DataLoader(dataset=dataset, 
+                                    **kwargs)
+                self.valid_loader = DataLoader(dataset=valid_dataset, 
                                      shuffle=False,
-                                     sampler=sampler.SubsetRandomSampler(range(self.num_train,dataset.__len__())),**kwargs)
+                                     **kwargs)
 
                 # Define Model
                 self.model = Registries.backbone_registry.__getitem__(args.backbone)(num_classes=10)
@@ -91,10 +92,18 @@ class Trainer:
                                 self.scheduler.load_state_dict(checkpoint['scheduler'])
                                 self.best_pred = checkpoint['best_pred']
                                 self.optimizer = self.scheduler.optimizer
-                                epoch = checkpoint['epoch'],
+                                self.current_epoch = checkpoint['current_epoch'],
                                 print("=> loaded checkpoint '{}'".format(args.pretrained_model_path))
 
-        def train(self,epoch):  
+        def train(self):  
+                for epoch in range(self.current_epoch, self.args.num_epochs):
+                        self._train_a_epoch(epoch)
+                        if epoch % self.args.valid_step == (self.args.valid_step - 1):
+                                self._valid_a_epoch(epoch)
+
+
+        
+        def _train_a_epoch(self,epoch):
                 print('train epoch %d' % epoch)
                 total_loss=0                                           
                 tbar = tqdm.tqdm(self.train_loader)
@@ -107,7 +116,7 @@ class Trainer:
                                 self.logger.show_img_grid(inputs)
                                 self.logger.writer.add_graph(self.model, inputs)                 
                         self.optimizer.zero_grad()   #zero the optimizer because the gradient will accumulate in PyTorch
-                        outputs = self.model(inputs)   #get the output(forward)              
+                        outputs = self.model(inputs)   #get the output(forward)            
                         loss = self.criterion(outputs, labels)       #compute the loss
                         loss.backward() #back propagate the loss(backward)
                         total_loss+=loss.item()
@@ -121,7 +130,9 @@ class Trainer:
                                    'best_pred':self.best_pred,
                                    'epoch':epoch},
                                    'current_checkpoint.pth')
-        def valid(self,epoch):
+                self.saver.save_parameters()
+
+        def _valid_a_epoch(self,epoch):
                 print('valid epoch %d' % epoch)
                 total_loss=0                                           
                 tbar = tqdm.tqdm(self.valid_loader)
@@ -151,22 +162,18 @@ class Trainer:
                         self.saver.save_parameters()
 
 
-
 def main():
         # basic parameters
         parser = argparse.ArgumentParser()
-        parser.add_argument('--num_epochs', type=int, default=300, help='Number of epochs to train for')
-        parser.add_argument('--start_epoch', type=int, default=0, help='Start counting epochs from this number')
+        parser.add_argument('--num_epochs', type=int, default=300, help='Number of epochs to train')
         parser.add_argument('--valid_step', type=int, default=1, help='How often to perform validation (epochs)')
         parser.add_argument('--dataset', type=str, default='CIFAR10', help='Dataset you are using.')
         parser.add_argument('--backbone', type=str, default='resnet18', help='Backbone you are using.')
-        parser.add_argument('--model', type=str, default='resnet18', help='Model you are using.')
         parser.add_argument('--batch_size', type=int, default=32, help='Number of images in each batch')
         parser.add_argument('--init_learning_rate', type=float, default=0.001, help='init learning rate used for train')
         parser.add_argument('--dataset_path', type=str, default='./data/cifar-10-batches-py/',help='path to dataset')
         parser.add_argument('--num_workers', type=int, default=4, help='num of workers')
         parser.add_argument('--num_classes', type=int, default=10, help='num of object classes (with void)')
-        parser.add_argument('--num_train', type=int, default=-1, help='num of training data')
         parser.add_argument('--gpu_ids', type=str, default='0', help='GPU ids used for training')
         parser.add_argument('--use_gpu', type=bool, default=True, help='whether to user gpu for training')
         parser.add_argument('--pretrained_model_path', type=str, default=None, help='path to load pretrained model')
@@ -183,10 +190,8 @@ def main():
         print(args)
         torch.manual_seed(args.seed)
         trainer = Trainer(args)
-        for epoch in range(trainer.args.start_epoch, trainer.args.num_epochs):
-                trainer.train(epoch)
-                if epoch % args.valid_step == (args.valid_step - 1) and args.num_train != -1:
-                        trainer.valid(epoch)
+        trainer.train()
+
 
 if __name__ == '__main__':
     main()

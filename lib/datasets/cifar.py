@@ -12,7 +12,7 @@ class CIFAR10(Dataset):
         self.transform = transform
         self.target_transform = target_transform
         if split == 'train':
-            for i in range(1,6):
+            for i in range(1,5):
                 filename = os.path.join(root, 'data_batch_%d' % (i, ))
                 with open(filename, 'rb') as f:
                     datadict = pickle.load(f, encoding='latin1')
@@ -24,16 +24,24 @@ class CIFAR10(Dataset):
                 label_list.append(label)
             self.data = np.concatenate(data_list)
             self.label = np.concatenate(label_list)
+        elif split == 'valid':
+            filename = os.path.join(root,'data_batch_5')
+            with open(filename, 'rb') as f:
+                datadict = pickle.load(f, encoding='latin1')
+            data = datadict['data']
+            label = datadict['labels']
+            self.data = data.reshape(-1, 3, 32, 32).transpose(0,2,3,1)
+            self.label = np.array(label)
         elif split == 'test':
             filename = os.path.join(root,'test_batch')
             with open(filename, 'rb') as f:
                 datadict = pickle.load(f, encoding='latin1')
             data = datadict['data']
             label = datadict['labels']
-            self.data = data.reshape(-1, 3, 32, 32).transpose(0,2,3,1).astype("float32")
-            self.label = np.array(label).astype("int")
+            self.data = data.reshape(-1, 3, 32, 32).transpose(0,2,3,1)
+            self.label = np.array(label)
         else:
-            raise RuntimeError('The split must be train or test in this dataset,but it got {}. '.format(split))
+            raise RuntimeError('The split must be train,valid or test in this dataset,but it got {}. '.format(split))
     def __getitem__(self,index):
         data=self.data[index]
         label=self.label[index]

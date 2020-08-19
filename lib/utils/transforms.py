@@ -3,7 +3,13 @@ import random
 import numpy as np
 from PIL import Image, ImageOps, ImageFilter
 
-class Normalize(object):
+class Lambda:
+    def __init__(self,lambd):
+        self.lambd = lambd
+    def __call__(self,image):
+        return self.lambd(image)
+
+class Normalize:
     """Normalize a tensor image with mean and standard deviation.
     Args:
         mean (tuple): means for each channel.
@@ -19,7 +25,7 @@ class Normalize(object):
         image /= self.std
         return image
 
-class ToTensor(object):
+class ToTensor:
     """Convert ndarrays in image to Tensors."""
 
     def __call__(self,image):
@@ -30,8 +36,12 @@ class ToTensor(object):
         image = torch.from_numpy(image).float()
         return image
 
+class ToLong:
+    def __call__(self,label):
+        return torch.tensor(label,dtype=torch.long)
 
-class RandomHorizontalFlip(object):
+
+class RandomHorizontalFlip:
     def __call__(self,image):         
         if random.random() < 0.5:
             image = image.transpose(Image.FLIP_LEFT_RIGHT)

@@ -1,0 +1,1 @@
+Namespace(backbone='resnet18', batch_size=32, dataset='CIFAR10', dataset_path='./data/cifar-10-batches-py/', gpu_ids=[0], init_learning_rate=0.001, num_classes=10, num_epochs=300, num_workers=4, pretrained_model_path=None, save_path='D:\\workplace\\visual studio code\\PyTorchTemplate', seed=1, use_gpu=True, valid_step=1)
