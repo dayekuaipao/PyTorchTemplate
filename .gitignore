@@ -1,5 +1,5 @@
-/.vscode/
-/runs/
-/data/
+.vscode/
+runs/
+data/
 **/__pycache__
 *.pth
