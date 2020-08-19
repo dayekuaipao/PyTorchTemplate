@@ -30,12 +30,13 @@ class Tester:
 
                 # Define Dataloader
                 kwargs = {'num_workers': args.num_workers, 
+                        'batch_size': args.batch_size,
                         'pin_memory': True}
                 test_transform=transforms.Compose([
                 transforms.ToTensor(),
                 ])
                 test_dataset = Registries.dataset_registry.__getitem__(args.dataset)(args.dataset_path,'test',test_transform) 
-                self.test_loader = DataLoader(dataset=test_dataset, batch_size=1, shuffle=True,  **kwargs)
+                self.test_loader = DataLoader(dataset=test_dataset, shuffle=True,  **kwargs)
 
                 # Define Model
                 self.model = Registries.backbone_registry.__getitem__(args.backbone)(num_classes=10)
@@ -76,7 +77,7 @@ class Tester:
                 confuse_matrix=self.evaluator.confusion_matrix      
                 print('confuse_matrix:',confuse_matrix)
                 confuse_matrix_frame=pd.DataFrame(confuse_matrix)
-                confuse_matrix_frame.to_csv("confuse_matrix.csv")
+                confuse_matrix_frame.to_csv(os.path.join(self.args.save_path,"confuse_matrix.csv"))
                 mIOU=self.evaluator.Mean_Intersection_over_Union()
                 print('mIOU:',mIOU)
 
@@ -85,16 +86,16 @@ def main():
         parser = argparse.ArgumentParser()
         parser.add_argument('--dataset', type=str, default='CIFAR10', help='Dataset you are using.')
         parser.add_argument('--backbone', type=str, default='resnet18', help='Backbone you are using.')
-        parser.add_argument('--model', type=str, default='resnet18', help='Model you are using.')
         parser.add_argument('--crop_height', type=int, default=32, help='Height of cropped/resized input image to network')
         parser.add_argument('--crop_width', type=int, default=32, help='Width of cropped/resized input image to network')
         parser.add_argument('--dataset_path', type=str, default='./data/cifar-10-batches-py/',help='path to dataset')
-        parser.add_argument('--pretrained_model_path', type=str, default='/path/to/pretrained_model',help='path of pretrained model')
+        parser.add_argument('--pretrained_model_path', type=str, default='./best_checkpoint.pth',help='path of pretrained model')
         parser.add_argument('--num_workers', type=int, default=4, help='num of workers')
         parser.add_argument('--num_classes', type=int, default=10, help='num of object classes (with void)')
         parser.add_argument('--gpu_ids', type=str, default='0', help='GPU ids used for testing')
         parser.add_argument('--use_gpu', type=bool, default=True, help='whether to user gpu for testing')
         parser.add_argument('--save_path', type=str, default=os.getcwd(), help='path to save results')
+        parser.add_argument('--batch_size', type=int, default=100, help='Number of images in each batch')
         args = parser.parse_args()
         if args.use_gpu:
                 try:

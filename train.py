@@ -130,7 +130,6 @@ class Trainer:
                                    'best_pred':self.best_pred,
                                    'epoch':epoch},
                                    'current_checkpoint.pth')
-                self.saver.save_parameters()
 
         def _valid_a_epoch(self,epoch):
                 print('valid epoch %d' % epoch)
@@ -151,6 +150,7 @@ class Trainer:
                                 self.evaluator.add_batch(labels.cpu().numpy(),predicts.cpu().numpy())
                 self.logger.writer.add_scalar('valid epoch loss', total_loss/step_num, epoch)
                 new_pred=self.evaluator.Mean_Intersection_over_Union()
+                print()
                 
                 if new_pred > self.best_pred:
                         self.best_pred = new_pred
