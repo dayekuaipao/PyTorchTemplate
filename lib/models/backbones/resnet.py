@@ -198,47 +198,56 @@ def _resnet(block, layers, **kwargs):
     model = ResNet(block, layers, **kwargs)
     return model
 
+
 @Registries.backbone_registry.register
 def resnet18(**kwargs):
     """Constructs a ResNet-18 model.
     """
-    return _resnet(BasicBlock, [2, 2, 2, 2],**kwargs)
+    return _resnet(BasicBlock, [2, 2, 2, 2], **kwargs)
+
 
 @Registries.backbone_registry.register
 def resnet34(**kwargs):
     """Constructs a ResNet-34 model.
     """
-    return _resnet(BasicBlock, [3, 4, 6, 3],**kwargs)
+    return _resnet(BasicBlock, [3, 4, 6, 3], **kwargs)
+
 
 @Registries.backbone_registry.register
 def resnet50(**kwargs):
     """Constructs a ResNet-50 model.
     """
-    return _resnet(Bottleneck, [3, 4, 6, 3],**kwargs)
+    return _resnet(Bottleneck, [3, 4, 6, 3], **kwargs)
+
 
 @Registries.backbone_registry.register
 def resnet101(**kwargs):
     """Constructs a ResNet-101 model.
     """
-    return _resnet(Bottleneck, [3, 4, 23, 3],**kwargs)
+    return _resnet(Bottleneck, [3, 4, 23, 3], **kwargs)
+
 
 @Registries.backbone_registry.register
 def resnet152(**kwargs):
     """Constructs a ResNet-152 model.
     """
-    return _resnet(Bottleneck, [3, 8, 36, 3],**kwargs)
+    return _resnet(Bottleneck, [3, 8, 36, 3], **kwargs)
+
 
 @Registries.backbone_registry.register
 def resnext50_32x4d(**kwargs):
     kwargs['groups'] = 32
     kwargs['width_per_group'] = 4
-    return _resnet(Bottleneck, [3, 4, 6, 3],**kwargs)
+    return _resnet(Bottleneck, [3, 4, 6, 3], **kwargs)
+
 
 @Registries.backbone_registry.register
 def resnext101_32x8d(**kwargs):
     kwargs['groups'] = 32
     kwargs['width_per_group'] = 8
-    return _resnet(Bottleneck, [3, 4, 23, 3],**kwargs)
+    return _resnet(Bottleneck, [3, 4, 23, 3], **kwargs)
+
+
 @Registries.backbone_registry.register
 def wide_resnet50_2(**kwargs):
     kwargs['width_per_group'] = 64 * 2
@@ -247,4 +256,4 @@ def wide_resnet50_2(**kwargs):
 
 def wide_resnet101_2(**kwargs):
     kwargs['width_per_group'] = 64 * 2
-    return _resnet(Bottleneck, [3, 4, 23, 3],**kwargs)
+    return _resnet(Bottleneck, [3, 4, 23, 3], **kwargs)

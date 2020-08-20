@@ -7,8 +7,9 @@ from lib.build.registry import Registries
 __all__ = ['Inception3', 'inception_v3']
 _InceptionOuputs = namedtuple('InceptionOuputs', ['logits', 'aux_logits'])
 
+
 @Registries.backbone_registry.register
-def inception_v3( **kwargs):
+def inception_v3(**kwargs):
     r"""Inception v3 model architecture from
     `"Rethinking the Inception Architecture for Computer Vision" <http://arxiv.org/abs/1512.00567>`_.
 

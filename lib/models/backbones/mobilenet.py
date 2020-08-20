@@ -1,6 +1,9 @@
 from torch import nn
+
 __all__ = ['MobileNetV2', 'mobilenet_v2']
+
 from lib.build.registry import Registries
+
 
 @Registries.backbone_registry.register
 def mobilenet_v2(**kwargs):
@@ -13,6 +16,7 @@ def mobilenet_v2(**kwargs):
     """
     model = MobileNetV2(**kwargs)
     return model
+
 
 def _make_divisible(v, divisor, min_value=None):
     """
@@ -146,4 +150,3 @@ class MobileNetV2(nn.Module):
         x = x.mean([2, 3])
         x = self.classifier(x)
         return x
-

@@ -2,13 +2,13 @@ class Registry(object):
     def __init__(self, registry_name):
         self._dict = {}
         self._name = registry_name
-        
+
     def __getitem__(self, key):
         return self._dict[key]
 
     def __contains__(self, key):
         return key in self._dict
-    
+
     def __setitem__(self, key, value):
         if not callable(value):
             raise Exception(f"Value of a Registry must be a callable!\nValue: {value}")
@@ -20,6 +20,7 @@ class Registry(object):
 
     def register(self, target):
         """Decorator to register a function or class."""
+
         def add(key, value):
             self[key] = value
             return value
@@ -33,9 +34,12 @@ class Registry(object):
     def keys(self):
         """key"""
         return self._dict.keys()
+
+
 class Registries(object):
     def __init__(self):
         raise RuntimeError("Registries is not intended to be instantiated")
+
     dataset_registry = Registry('dataset')
     backbone_registry = Registry('backbone')
     model_registry = Registry('model')

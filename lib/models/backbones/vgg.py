@@ -7,7 +7,6 @@ __all__ = [
 ]
 
 
-
 class VGG(nn.Module):
 
     def __init__(self, features, num_classes=1000, init_weights=True):
@@ -71,55 +70,63 @@ cfgs = {
 }
 
 
-def _vgg(arch, cfg, batch_norm,  **kwargs):
+def _vgg(arch, cfg, batch_norm, **kwargs):
     model = VGG(make_layers(cfgs[cfg], batch_norm=batch_norm), **kwargs)
     return model
 
+
 @Registries.backbone_registry.register
-def vgg11( **kwargs):
+def vgg11(**kwargs):
     """VGG 11-layer model (configuration "A")
 
     """
-    return _vgg('vgg11', 'A', False,  **kwargs)
+    return _vgg('vgg11', 'A', False, **kwargs)
+
 
 @Registries.backbone_registry.register
-def vgg11_bn( **kwargs):
+def vgg11_bn(**kwargs):
     """VGG 11-layer model (configuration "A") with batch normalization
     """
-    return _vgg('vgg11_bn', 'A', True,  **kwargs)
+    return _vgg('vgg11_bn', 'A', True, **kwargs)
+
 
 @Registries.backbone_registry.register
-def vgg13( **kwargs):
+def vgg13(**kwargs):
     """VGG 13-layer model (configuration "B")
     """
-    return _vgg('vgg13', 'B', False,  **kwargs)
+    return _vgg('vgg13', 'B', False, **kwargs)
+
 
 @Registries.backbone_registry.register
-def vgg13_bn( **kwargs):
+def vgg13_bn(**kwargs):
     """VGG 13-layer model (configuration "B") with batch normalization
     """
-    return _vgg('vgg13_bn', 'B', True,  **kwargs)
+    return _vgg('vgg13_bn', 'B', True, **kwargs)
+
 
 @Registries.backbone_registry.register
-def vgg16( **kwargs):
+def vgg16(**kwargs):
     """VGG 16-layer model (configuration "D")
     """
-    return _vgg('vgg16', 'D', False,  **kwargs)
+    return _vgg('vgg16', 'D', False, **kwargs)
+
 
 @Registries.backbone_registry.register
-def vgg16_bn( **kwargs):
+def vgg16_bn(**kwargs):
     """VGG 16-layer model (configuration "D") with batch normalization
     """
-    return _vgg('vgg16_bn', 'D', True,  **kwargs)
+    return _vgg('vgg16_bn', 'D', True, **kwargs)
+
 
 @Registries.backbone_registry.register
-def vgg19( **kwargs):
+def vgg19(**kwargs):
     """VGG 19-layer model (configuration "E")
     """
-    return _vgg('vgg19', 'E', False,  **kwargs)
+    return _vgg('vgg19', 'E', False, **kwargs)
+
 
 @Registries.backbone_registry.register
-def vgg19_bn( **kwargs):
+def vgg19_bn(**kwargs):
     """VGG 19-layer model (configuration 'E') with batch normalization
     """
-    return _vgg('vgg19_bn', 'E', True,  **kwargs)
+    return _vgg('vgg19_bn', 'E', True, **kwargs)
