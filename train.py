@@ -98,6 +98,7 @@ class Trainer:
                 self.best_pred = checkpoint['best_pred']
                 self.optimizer = self.scheduler.optimizer
                 self.last_epoch = checkpoint['last_epoch']
+                
                 print("=> loaded checkpoint '{}'".format(args.pretrained_model_path))
 
     def train(self):
@@ -179,7 +180,7 @@ def main():
     parser.add_argument('--num_classes', type=int, default=10, help='num of object classes (with void)')
     parser.add_argument('--gpu_ids', type=str, default='0', help='GPU ids used for training')
     parser.add_argument('--use_gpu', type=bool, default=True, help='whether to user gpu for training')
-    parser.add_argument('--pretrained_model_path', type=str, default='D:/workplace/visual studio code/PyTorchTemplate/current_checkpoint.pth', help='path to load pretrained model')
+    parser.add_argument('--pretrained_model_path', type=str, default=None, help='path to load pretrained model')
     parser.add_argument('--save_path', type=str, default=os.getcwd(), help='path to save pretrained model and results')
     parser.add_argument('--seed', type=int, default=1, metavar='S', help='random seed (default: 1)')
     args = parser.parse_args()
