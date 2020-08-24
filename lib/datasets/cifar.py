@@ -1,7 +1,9 @@
-import numpy as np
 import os
-from torch.utils.data import Dataset, DataLoader
 import pickle
+
+import numpy as np
+from torch.utils.data import Dataset, DataLoader
+
 from lib.build.registry import Registries
 
 

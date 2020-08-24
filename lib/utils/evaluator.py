@@ -16,11 +16,11 @@ class Evaluator(object):
         return Acc
 
     def Mean_Intersection_over_Union(self):
-        MIoU = np.diag(self.confusion_matrix) / (
+        mIoU = np.diag(self.confusion_matrix) / (
                 np.sum(self.confusion_matrix, axis=1) + np.sum(self.confusion_matrix, axis=0) -
                 np.diag(self.confusion_matrix))
-        MIoU = np.nanmean(MIoU)
-        return MIoU
+        mIoU = np.nanmean(mIoU)
+        return mIoU
 
     def _generate_matrix(self, labels, predicts):
         tmp = self.num_class * labels + predicts

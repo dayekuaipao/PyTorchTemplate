@@ -1,7 +1,9 @@
 from collections import namedtuple
+
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
+
 from lib.build.registry import Registries
 
 __all__ = ['Inception3', 'inception_v3']

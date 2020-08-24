@@ -1,4 +1,7 @@
-class Registry(object):
+import logging
+
+
+class Registry:
     def __init__(self, registry_name):
         self._dict = {}
         self._name = registry_name
@@ -36,7 +39,7 @@ class Registry(object):
         return self._dict.keys()
 
 
-class Registries(object):
+class Registries:
     def __init__(self):
         raise RuntimeError("Registries is not intended to be instantiated")
 

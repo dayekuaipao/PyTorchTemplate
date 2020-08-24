@@ -1,7 +1,6 @@
 import os
-import shutil
+
 import torch
-import glob
 
 
 class Saver(object):

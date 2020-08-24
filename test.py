@@ -1,20 +1,16 @@
-import os
 import argparse
-import torch
-import numpy as np
-from torch.utils.data import DataLoader
-from lib.build.registry import Registries
-from lib.datasets.cifar import *
-from lib.models.backbones.resnet import *
-import tqdm
+
 import pandas as pd
-from torch.nn import functional as F
+import torch
+import tqdm
 from torch.utils.tensorboard import SummaryWriter
-from lib.utils.saver import Saver
-from lib.utils.logger import Logger
-from lib.utils.evaluator import Evaluator
+
+from lib.build.registry import Registries
+from lib.models.backbones.mobilenet import *
+from lib.datasets.cifar import *
 from lib.utils import transforms
-from lib.utils.loss import FocalLoss
+from lib.utils.evaluator import Evaluator
+from lib.utils.saver import Saver
 
 
 class Tester:
@@ -30,7 +26,7 @@ class Tester:
         # Define SummaryWriter
         self.writer = SummaryWriter()
 
-        # Define Dataloader
+        # Define DataLoader
         kwargs = {'num_workers': args.num_workers,
                   'batch_size': args.batch_size,
                   'pin_memory': True}
@@ -62,7 +58,8 @@ class Tester:
                     self.model.module.load_state_dict(checkpoint['model'])
                 else:
                     self.model.load_state_dict(checkpoint['model'])
-                print("=> loaded checkpoint '{}' (epoch {})".format(args.pretrained_model_path, checkpoint['epoch']))
+                print(
+                    "=> loaded checkpoint '{}' (epoch {})".format(args.pretrained_model_path, checkpoint['last_epoch']))
         else:
             raise RuntimeError('No pretrained model!')
 
@@ -88,7 +85,7 @@ def main():
     # basic parameters
     parser = argparse.ArgumentParser()
     parser.add_argument('--dataset', type=str, default='CIFAR10', help='Dataset you are using.')
-    parser.add_argument('--backbone', type=str, default='resnet18', help='Backbone you are using.')
+    parser.add_argument('--backbone', type=str, default='mobilenet_v2', help='Backbone you are using.')
     parser.add_argument('--crop_height', type=int, default=32, help='Height of cropped/resized input image to network')
     parser.add_argument('--crop_width', type=int, default=32, help='Width of cropped/resized input image to network')
     parser.add_argument('--dataset_path', type=str, default='./data/cifar-10-batches-py/', help='path to dataset')

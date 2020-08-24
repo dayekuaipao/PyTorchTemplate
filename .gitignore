@@ -1,4 +1,4 @@
-.vscode/
+.idea/
 runs/
 data/
 **/__pycache__

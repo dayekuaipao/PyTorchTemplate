@@ -1,19 +1,17 @@
-import os
 import argparse
+
 import torch
-import numpy as np
-from torch.utils.data import DataLoader, sampler
-from lib.build.registry import Registries
-from lib.datasets.cifar import *
-from lib.models.backbones.resnet import *
 import tqdm
-from torch.nn import functional as F
-from lib.utils.saver import Saver
-from lib.utils.logger import Logger
-from lib.utils.evaluator import Evaluator
-from lib.utils.lr_scheduler import WarmUpStepLR
+
+from lib.build.registry import Registries
+from lib.models.backbones.mobilenet import *
+from lib.datasets.cifar import *
 from lib.utils import transforms
+from lib.utils.evaluator import Evaluator
+from lib.utils.logger import Logger
 from lib.utils.loss import FocalLoss
+from lib.utils.lr_scheduler import WarmUpStepLR
+from lib.utils.saver import Saver
 
 
 class Trainer:
@@ -35,7 +33,7 @@ class Trainer:
         # Define Last Epoch
         self.last_epoch = -1
 
-        # Define Dataloader
+        # Define DataLoader
         train_transform = transforms.Compose([
             transforms.ToTensor(),
         ])
@@ -98,11 +96,10 @@ class Trainer:
                 self.best_pred = checkpoint['best_pred']
                 self.optimizer = self.scheduler.optimizer
                 self.last_epoch = checkpoint['last_epoch']
-                
                 print("=> loaded checkpoint '{}'".format(args.pretrained_model_path))
 
     def train(self):
-        for epoch in range(self.last_epoch+1, self.args.num_epochs):
+        for epoch in range(self.last_epoch + 1, self.args.num_epochs):
             self._train_a_epoch(epoch)
             if epoch % self.args.valid_step == (self.args.valid_step - 1):
                 self._valid_a_epoch(epoch)
@@ -128,6 +125,8 @@ class Trainer:
             tbar.set_description('train iteration loss= %.6f' % loss.item())
             self.logger.writer.add_scalar('train iteration loss', loss, epoch * step_num + step)
         self.logger.writer.add_scalar('train epoch loss', total_loss / step_num, epoch)
+        preds = torch.argmax(outputs, dim=1)
+        self.logger.add_pr_curve_tensorboard('pr curve', labels, preds)
         self.scheduler.step()  # update the learning rate
         self.saver.save_checkpoint({'scheduler': self.scheduler.state_dict(),
                                     'model': self.model.state_dict(),
@@ -137,22 +136,15 @@ class Trainer:
 
     def _valid_a_epoch(self, epoch):
         print('valid epoch %d' % epoch)
-        total_loss = 0
         tbar = tqdm.tqdm(self.valid_loader)
         self.model.eval()  # change the model to eval mode
-        step_num = len(self.valid_loader)
         with torch.no_grad():
             for step, sample in enumerate(tbar):
                 inputs, labels = sample['data'], sample['label']  # get the inputs and labels from dataloader
                 inputs, labels = inputs.to(self.device), labels.to(self.device)
                 outputs = self.model(inputs)  # get the output(forward)
-                loss = self.criterion(outputs, labels)  # compute the loss
-                total_loss += loss.item()
                 predicts = torch.argmax(outputs, dim=1)
-                tbar.set_description('valid iteration loss= %.6f' % loss.item())
-                self.logger.writer.add_scalar('valid iteration loss', loss, epoch * step_num + step)
                 self.evaluator.add_batch(labels.cpu().numpy(), predicts.cpu().numpy())
-        self.logger.writer.add_scalar('valid epoch loss', total_loss / step_num, epoch)
         new_pred = self.evaluator.Mean_Intersection_over_Union()
         print()
 
@@ -172,7 +164,7 @@ def main():
     parser.add_argument('--num_epochs', type=int, default=50, help='Number of epochs to train')
     parser.add_argument('--valid_step', type=int, default=1, help='How often to perform validation (epochs)')
     parser.add_argument('--dataset', type=str, default='CIFAR10', help='Dataset you are using.')
-    parser.add_argument('--backbone', type=str, default='resnet18', help='Backbone you are using.')
+    parser.add_argument('--backbone', type=str, default='mobilenet_v2', help='Backbone you are using.')
     parser.add_argument('--batch_size', type=int, default=32, help='Number of images in each batch')
     parser.add_argument('--init_learning_rate', type=float, default=0.001, help='init learning rate used for train')
     parser.add_argument('--dataset_path', type=str, default='./data/cifar-10-batches-py/', help='path to dataset')
