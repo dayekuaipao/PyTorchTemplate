@@ -42,7 +42,6 @@ class Registry:
 class Registries:
     def __init__(self):
         raise RuntimeError("Registries is not intended to be instantiated")
-
     dataset_registry = Registry('dataset')
     backbone_registry = Registry('backbone')
     model_registry = Registry('model')

@@ -6,7 +6,7 @@ import tqdm
 from torch.utils.tensorboard import SummaryWriter
 
 from lib.build.registry import Registries
-from lib.models.backbones.mobilenet import *
+from lib.models.backbones.resnet import *
 from lib.datasets.cifar import *
 from lib.utils import transforms
 from lib.utils.evaluator import Evaluator
@@ -74,7 +74,7 @@ class Tester:
                 predicts = torch.argmax(outputs, dim=1)
                 self.evaluator.add_batch(labels.cpu().numpy(), predicts.cpu().numpy())
         confuse_matrix = self.evaluator.confusion_matrix
-        print('confuse_matrix:', confuse_matrix)
+        print('confuse_matrix:\n', confuse_matrix)
         confuse_matrix_frame = pd.DataFrame(confuse_matrix)
         confuse_matrix_frame.to_csv(os.path.join(self.args.save_path, "confuse_matrix.csv"))
         mIOU = self.evaluator.Mean_Intersection_over_Union()
@@ -85,18 +85,18 @@ def main():
     # basic parameters
     parser = argparse.ArgumentParser()
     parser.add_argument('--dataset', type=str, default='CIFAR10', help='Dataset you are using.')
-    parser.add_argument('--backbone', type=str, default='mobilenet_v2', help='Backbone you are using.')
+    parser.add_argument('--backbone', type=str, default='resnet50', help='Backbone you are using.')
     parser.add_argument('--crop_height', type=int, default=32, help='Height of cropped/resized input image to network')
     parser.add_argument('--crop_width', type=int, default=32, help='Width of cropped/resized input image to network')
     parser.add_argument('--dataset_path', type=str, default='./data/cifar-10-batches-py/', help='path to dataset')
     parser.add_argument('--pretrained_model_path', type=str, default='./best_checkpoint.pth',
                         help='path of pretrained model')
-    parser.add_argument('--num_workers', type=int, default=4, help='num of workers')
+    parser.add_argument('--num_workers', type=int, default=1, help='num of workers')
     parser.add_argument('--num_classes', type=int, default=10, help='num of object classes (with void)')
     parser.add_argument('--gpu_ids', type=str, default='0', help='GPU ids used for testing')
     parser.add_argument('--use_gpu', type=bool, default=True, help='whether to user gpu for testing')
     parser.add_argument('--save_path', type=str, default=os.getcwd(), help='path to save results')
-    parser.add_argument('--batch_size', type=int, default=100, help='Number of images in each batch')
+    parser.add_argument('--batch_size', type=int, default=32, help='Number of images in each batch')
     args = parser.parse_args()
     if args.use_gpu:
         try:

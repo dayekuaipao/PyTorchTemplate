@@ -4,12 +4,12 @@ import torch
 import tqdm
 
 from lib.build.registry import Registries
-from lib.models.backbones.mobilenet import *
+from lib.models.backbones.resnet import *
+from lib.models.loss import FocalLoss
 from lib.datasets.cifar import *
 from lib.utils import transforms
 from lib.utils.evaluator import Evaluator
 from lib.utils.logger import Logger
-from lib.utils.loss import FocalLoss
 from lib.utils.lr_scheduler import WarmUpStepLR
 from lib.utils.saver import Saver
 
@@ -71,7 +71,7 @@ class Trainer:
         self.criterion = FocalLoss()
 
         # Define  Learning Rate Scheduler
-        self.scheduler = WarmUpStepLR(self.optimizer, warm_up_end_epoch=0, step_size=50, gamma=0.1)
+        self.scheduler = WarmUpStepLR(self.optimizer, warm_up_end_epoch=100, step_size=50, gamma=0.1)
 
         # Use cuda
         if torch.cuda.is_available() and args.use_gpu:
@@ -161,14 +161,14 @@ class Trainer:
 def main():
     # basic parameters
     parser = argparse.ArgumentParser()
-    parser.add_argument('--num_epochs', type=int, default=50, help='Number of epochs to train')
+    parser.add_argument('--num_epochs', type=int, default=500, help='Number of epochs to train')
     parser.add_argument('--valid_step', type=int, default=1, help='How often to perform validation (epochs)')
     parser.add_argument('--dataset', type=str, default='CIFAR10', help='Dataset you are using.')
-    parser.add_argument('--backbone', type=str, default='mobilenet_v2', help='Backbone you are using.')
+    parser.add_argument('--backbone', type=str, default='resnet50', help='Backbone you are using.')
     parser.add_argument('--batch_size', type=int, default=32, help='Number of images in each batch')
     parser.add_argument('--init_learning_rate', type=float, default=0.001, help='init learning rate used for train')
     parser.add_argument('--dataset_path', type=str, default='./data/cifar-10-batches-py/', help='path to dataset')
-    parser.add_argument('--num_workers', type=int, default=4, help='num of workers')
+    parser.add_argument('--num_workers', type=int, default=1, help='num of workers')
     parser.add_argument('--num_classes', type=int, default=10, help='num of object classes (with void)')
     parser.add_argument('--gpu_ids', type=str, default='0', help='GPU ids used for training')
     parser.add_argument('--use_gpu', type=bool, default=True, help='whether to user gpu for training')

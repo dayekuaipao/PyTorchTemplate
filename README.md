@@ -15,11 +15,11 @@ The path of PyTorch datasets. There is a example 'cifar.py' for it.  Just like a
 
 ##### lib/models
 
-The path of models. There are some backbones such as  inception, MobileNet, ResNet, VGG in the directory. You can implement your own model using these backbones.
+The path of models. There are some backbones such as  inception, MobileNet, ResNet, VGG and loss function like focal loss in the directory . You can implement your own model using these backbones and loss.
 
 ##### lib/utils
 
-The path for some utils. You can implement your own loss (in 'loss.py'), learning rate scheduler (in 'lr_scheduler.py'), transforms (in 'transform.py'). There are also some helpful tools such as evaluator for evaluating your model's performance, logger for saving logs in tensorboard, saver for saving the model.
+The path for some utils. You can implement your learning rate scheduler (in 'lr_scheduler.py'), transforms (in 'transform.py'). There are also some helpful tools such as evaluator for evaluating your model's performance, logger for saving logs in tensorboard, saver for saving the model.
 
 ### test.py
 
