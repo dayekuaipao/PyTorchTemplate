@@ -31,7 +31,7 @@ Python script for training. The parameter information is in it.
 
 
 
-## Examples
+## Tutorials
 
 1. Create two directories 'data' and 'experiment'.
 2. Put cifar10 dataset in 'data/cifar10/'. 
