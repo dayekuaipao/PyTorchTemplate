@@ -56,7 +56,7 @@ We can see a directory 'runs' (tensorboard files of training), and three files: 
 python ../../test.py --dataset_path ../../data/cifar-10-batches-py/ --pretrained_model_path ./best_checkpoint.pth
 ```
 
-7. Runn the shell command by:
+7. Run the shell command by:
 
 ```shell
 sh test.sh
