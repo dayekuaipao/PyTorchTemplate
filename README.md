@@ -7,7 +7,7 @@ The code for the template.
 
 ##### lib/build
 
-Something to help to build the repo, for example, 'registry.py', it implements a registry for datasets, models and bckbones.
+Something helpful for building the repo, for example, 'registry.py', it implements a registry for datasets, models and bckbones.
 
 ##### lib/datasets
 
