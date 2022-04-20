@@ -11,11 +11,11 @@ Something helpful for building the repo, for example, 'registry.py', it implemen
 
 ##### lib/datasets
 
-The path of PyTorch datasets. There is a example 'cifar.py' for it.  Just like a traditional PyTorch dataset,but we should register it in dataset_registry.
+The path of PyTorch datasets. There is an example 'cifar.py' for it.  Just like a traditional PyTorch dataset,but we should register it in dataset_registry.
 
 ##### lib/models
 
-The path of models. There are some backbones such as  inception, MobileNet, ResNet, VGG and loss function like focal loss in the directory . You can implement your own model using these backbones and loss.
+The path of models. There are some backbones such as inception, MobileNet, ResNet, VGG and loss function like focal loss in the directory. You can implement your own model using these backbones and loss.
 
 ##### lib/utils
 
@@ -33,15 +33,16 @@ Python script for training. The parameter information is in it.
 
 ## Examples
 
-We first create two directories 'data' and 'experiment'. We put cifar10 dataset in 'data/cifar10/'. 
-
-Then we create a directory 'experiment/expriment1'. We  create a shell file named 'train.sh' in the directory:
+1. Create two directories 'data' and 'experiment'.
+2. Put cifar10 dataset in 'data/cifar10/'. 
+3. Create a directory 'experiment/expriment1'.
+4. Create a shell file named 'train.sh' in the directory:
 
 ```shell
 python ../../train.py --dataset_path ../../data/cifar-10-batches-py/ --num_train 40000
 ```
 
-Then we run the shell command by:
+5. Run the shell command by:
 
 ```shell
 sh train.sh
@@ -49,19 +50,19 @@ sh train.sh
 
 We can see a directory 'runs' (tensorboard files of training), and three files: 'best_checkpoint.pth', 'current_checkpoint' (to help resuming training process.), 'parameters.txt' (the parameter of training).
 
-Next we  create a shell file named 'test.sh' in the directory:
+6. Create a shell file named 'test.sh' in the directory:
 
 ```python
 python ../../test.py --dataset_path ../../data/cifar-10-batches-py/ --pretrained_model_path ./best_checkpoint.pth
 ```
 
-Then we run the shell command by:
+7. Runn the shell command by:
 
 ```shell
 sh test.sh
 ```
 
-At last e can see a file 'confuse_matrix.csv' which is the confuse matrix of test data.
+We can see a file 'confuse_matrix.csv' which is the confuse matrix of test data.
 
 
 
